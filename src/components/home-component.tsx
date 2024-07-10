@@ -64,6 +64,7 @@ export default function HomeComponent() {
                 <Table>
                     <TableHeader>
                         <TableRow>
+                            <TableHead className="">Owner ID</TableHead>
                             <TableHead className="">Leasing Owner</TableHead>
                             <TableHead>Date</TableHead>
                             <TableHead>Rate %</TableHead>
@@ -73,6 +74,7 @@ export default function HomeComponent() {
                     <TableBody>
                         {leasings.map((leasing) => (
                             <TableRow key={leasing._id}>
+                                <TableCell className="font-medium">{leasing._id}</TableCell>
                                 <TableCell className="font-medium">{leasing.owner.surname} {leasing.owner.name}</TableCell>
                                 <TableCell>{formatDateString(leasing.date)}</TableCell>
                                 <TableCell>{leasing.rate}</TableCell>
