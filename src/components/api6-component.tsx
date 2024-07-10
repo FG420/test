@@ -39,8 +39,10 @@ export function Api6Component() {
         getLeasings();
     }, [viewLimit, dateMin, dateMax]);
 
-    const formatDateString = (dateString: string) => {
-        const date = new Date(dateString);
+    const formatDateString = (date: Date | string) => {
+        if (typeof date === 'string') {
+            date = new Date(date);
+        }
         return date.toLocaleDateString();
     };
 

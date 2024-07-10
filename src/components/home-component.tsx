@@ -35,8 +35,10 @@ export default function HomeComponent() {
         getLeasings();
     }, [viewLimit]);
 
-    const formatDateString = (dateString: string) => {
-        const date = new Date(dateString);
+    const formatDateString = (date: Date | string) => {
+        if (typeof date === 'string') {
+            date = new Date(date);
+        }
         return date.toLocaleDateString();
     };
 

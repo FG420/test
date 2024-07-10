@@ -81,7 +81,7 @@ export function Api4Component() {
                                         </SelectTrigger>
                                         <SelectContent>
                                             {leasings.map((leasing) => (
-                                                <SelectItem key={leasing._id} value={leasing._id}>
+                                                <SelectItem key={leasing._id} value={String(leasing._id)}>
                                                     {leasing.owner.surname} {leasing.owner.name}
                                                 </SelectItem>
                                             ))}
@@ -143,7 +143,8 @@ export function Api4Component() {
                             <FormItem>
                                 <FormLabel>Rate</FormLabel>
                                 <FormControl>
-                                    <Select onValueChange={field.onChange} value={field.value}>
+                                    <Select onValueChange={(value) => field.onChange(Number(value))}
+                                        value={String(field.value)}>
                                         <SelectTrigger className="w-56">
                                             <SelectValue placeholder="Select Rate" />
                                         </SelectTrigger>

@@ -1,5 +1,4 @@
-'use client'
-
+'use client';
 
 import { tLeasing } from "@/models/leasing";
 import axios from "axios";
@@ -42,8 +41,10 @@ export default function Api2Component() {
         getLeasings();
     }, [surname, name]);
 
-    const formatDateString = (dateString: string) => {
-        const date = new Date(dateString);
+    const formatDateString = (date: Date | string) => {
+        if (typeof date === 'string') {
+            date = new Date(date);
+        }
         return date.toLocaleDateString();
     };
 

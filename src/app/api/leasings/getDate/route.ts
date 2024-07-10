@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
         const dateMin = req.nextUrl.searchParams.get('dateMin');
         const dateMax = req.nextUrl.searchParams.get('dateMax');
 
-        let query: any = {};
+        let query: Record<string, any> = {};
 
         if (dateMin || dateMax) {
             query.date = {};

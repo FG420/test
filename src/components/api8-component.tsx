@@ -72,7 +72,7 @@ export function Api8Component() {
                 </div>
             </div>
             <div>
-                <Label>The Average Rate is: {rate!} %</Label>
+                <Label>The Average Rate is: {Number(rate)} %</Label>
             </div>
         </>
     );

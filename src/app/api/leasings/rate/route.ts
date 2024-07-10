@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
         const dateMin = req.nextUrl.searchParams.get('dateMin');
         const dateMax = req.nextUrl.searchParams.get('dateMax');
 
-        let query = {};
+        let query: Record<string, any> = {};
 
         if (dateMin || dateMax) {
             query.date = {};
@@ -30,8 +30,7 @@ export async function GET(req: NextRequest) {
         const median = medianRate.length > 0 ? medianRate[0].median : 0;
 
         return NextResponse.json({ median }, { status: 200 });
-    } catch (error) {
-        console.error("Error fetching and calculating median rate:", error);
+    } catch (error: any) {
         return NextResponse.json({ message: error.message }, { status: 400 });
     }
 }

@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
         const id = req.nextUrl.searchParams.get('id');
         const { name, surname, amount, rate } = await req.json();
 
-        const updateFields = {};
+        const updateFields: Record<string, any> = {};
         if (name !== undefined && name !== null) {
             updateFields['owner.name'] = name;
         }

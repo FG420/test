@@ -18,7 +18,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
-const newLesingForm = z.object({
+const newLeasingForm = z.object({
     name: z.string(),
     surname: z.string(),
     amount: z.coerce.number(),
@@ -27,19 +27,9 @@ const newLesingForm = z.object({
 
 export function Api3Component() {
     const router = useRouter()
-    // const [tradingAccs, setTradingAccs] = useState<tTradingAccount[]>([]);
 
-    // const getAllTradingAccs = async () => {
-    //     try {
-    //         const res = await axios.get('api/trading-accounts');
-    //         setTradingAccs(res.data.tradingAccounts);
-    //     } catch (error: any) {
-    //         console.log(error);
-    //     }
-    // };
-
-    const form = useForm<z.infer<typeof newLesingForm>>({
-        resolver: zodResolver(newLesingForm),
+    const form = useForm<z.infer<typeof newLeasingForm>>({
+        resolver: zodResolver(newLeasingForm),
         defaultValues: {
             name: '',
             surname: '',
@@ -47,7 +37,7 @@ export function Api3Component() {
         },
     });
 
-    async function onSubmit(values: z.infer<typeof newLesingForm>) {
+    async function onSubmit(values: z.infer<typeof newLeasingForm>) {
         console.log(values);
         try {
             await axios.post('api/leasings/new', values);
@@ -61,33 +51,38 @@ export function Api3Component() {
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                 <div className="flex justify-around">
+                    <div className="p-4">
 
-                    <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Owner Name</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="Insert Owner Name" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="surname"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Owner Surname</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="Insert Owner Surname" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                        <FormField
+                            control={form.control}
+                            name="name"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Owner Name</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Insert Owner Name" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+                    <div className="p-4">
+
+                        <FormField
+                            control={form.control}
+                            name="surname"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Owner Surname</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Insert Owner Surname" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
                 </div>
                 <div className="flex justify-around">
                     <FormField
@@ -110,7 +105,10 @@ export function Api3Component() {
                             <FormItem>
                                 <FormLabel>Rate</FormLabel>
                                 <FormControl>
-                                    <Select onValueChange={field.onChange} value={field.value}>
+                                    <Select
+                                        onValueChange={(value) => field.onChange(Number(value))}
+                                        value={String(field.value)}
+                                    >
                                         <SelectTrigger className="w-56">
                                             <SelectValue placeholder="Select Rate" />
                                         </SelectTrigger>

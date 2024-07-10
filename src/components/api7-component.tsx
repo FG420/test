@@ -72,7 +72,7 @@ export function Api7Component() {
                 </div>
             </div>
             <div>
-                <Label>The Sum is: € {sum!}</Label>
+                <Label>The Sum is: € {Number(sum)}</Label>
             </div>
         </>
     );

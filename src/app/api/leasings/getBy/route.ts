@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
         const surname = req.nextUrl.searchParams.get("surname");
         const name = req.nextUrl.searchParams.get("name");
 
-        const query = {};
+        const query: Record<string, any> = {};
         if (surname && name) {
             query['$and'] = [
                 { 'owner.surname': { $regex: surname, $options: 'i' } },
