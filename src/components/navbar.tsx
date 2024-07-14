@@ -7,7 +7,7 @@ export function NavBarComponent() {
 
 
     return (
-        <div className="flex">
+        <div className="flex justify-center">
             <ul className="flex justify-center">
                 <div className="p-4">
                     <Link href={'/'}>Api 1 - Home</Link>
