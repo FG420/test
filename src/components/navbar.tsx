@@ -13,25 +13,25 @@ export function NavBarComponent() {
                     <Link href={'/'}>Api 1 - Home</Link>
                 </div>
                 <div className="p-4">
-                    <Link href={'/api2'}>Api 2</Link>
+                    <Link href={'/page2'}>Api 2</Link>
                 </div>
                 <div className="p-4">
-                    <Link href={'/api3'}>Api 3</Link>
+                    <Link href={'/page3'}>Api 3</Link>
                 </div>
                 <div className="p-4">
-                    <Link href={'/api4'}>Api 4</Link>
+                    <Link href={'/page4'}>Api 4</Link>
                 </div>
                 <div className="p-4">
-                    <Link href={'/api5'}>Api 5</Link>
+                    <Link href={'/page5'}>Api 5</Link>
                 </div>
                 <div className="p-4">
-                    <Link href={'/api6'}>Api 6</Link>
+                    <Link href={'/page6'}>Api 6</Link>
                 </div>
                 <div className="p-4">
-                    <Link href={'/api7'}>Api 7</Link>
+                    <Link href={'/page7'}>Api 7</Link>
                 </div>
                 <div className="p-4">
-                    <Link href={'/api8'}>Api 8</Link>
+                    <Link href={'/page8'}>Api 8</Link>
                 </div>
             </ul>
         </div>
