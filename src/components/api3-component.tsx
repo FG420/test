@@ -26,7 +26,7 @@ const modifyJobForm = z.object({
     description: z.string().optional(),
     salary: z.coerce.number().optional(),
     date: z.string().optional(),
-});
+})
 
 export function Api3Component() {
     const router = useRouter()
@@ -118,7 +118,7 @@ export function Api3Component() {
                                     <FormControl>
                                         <Input placeholder="Insert Title" {...field} />
                                     </FormControl>
-                                    <FormMessage>{form.formState.errors.title?.message}</FormMessage>
+                                    <FormMessage />
                                 </FormItem>
                             )}
                         />
@@ -135,7 +135,7 @@ export function Api3Component() {
                                             maxLength={400}
                                         />
                                     </FormControl>
-                                    <FormMessage>{form.formState.errors.description?.message}</FormMessage>
+                                    <FormMessage />
                                 </FormItem>
                             )}
                         />
@@ -150,7 +150,7 @@ export function Api3Component() {
                                             <FormControl>
                                                 <Input type="number" {...field} step={0.01} />
                                             </FormControl>
-                                            <FormMessage>{form.formState.errors.salary?.message}</FormMessage>
+                                            <FormMessage />
                                         </FormItem>
                                     )}
                                 />
@@ -169,7 +169,7 @@ export function Api3Component() {
                                                     value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
                                                 />
                                             </FormControl>
-                                            <FormMessage>{form.formState.errors.date?.message}</FormMessage>
+                                            <FormMessage />
                                         </FormItem>
                                     )}
                                 />
