@@ -84,7 +84,7 @@ export function Api4Component() {
                     <Label className="px-4">Job ID</Label>
                     <div className="flex justify-around items-center">
 
-                        <div className="p-2">
+                        <div className="flex justify-around items-center">
 
                             <FormField
                                 control={form.control}
@@ -98,11 +98,11 @@ export function Api4Component() {
                                     </FormItem>
                                 )}
                             />
+                            <div className="p-2">
+                                <Button type="submit">Delete Job</Button>
+                            </div>
                         </div>
 
-                        <div className="p-2">
-                            <Button type="submit">Delete Job</Button>
-                        </div>
                     </div>
                 </form>
             </Form>

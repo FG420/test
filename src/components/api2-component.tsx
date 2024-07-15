@@ -19,10 +19,10 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 
 const newJobForm = z.object({
-    title: z.string(),
-    description: z.string(),
-    salary: z.coerce.number(),
-    date: z.string(),
+    title: z.string().nonempty("Title is required"),
+    description: z.string().nonempty("Description is required"),
+    salary: z.coerce.number().positive("Salary must be a positive number"),
+    date: z.string().nonempty("Date is required"),
 });
 
 export function Api2Component() {
@@ -30,12 +30,6 @@ export function Api2Component() {
 
     const form = useForm<z.infer<typeof newJobForm>>({
         resolver: zodResolver(newJobForm),
-        defaultValues: {
-            title: '',
-            description: '',
-            salary: 0,
-            date: '',
-        },
     });
 
     async function onSubmit(values: z.infer<typeof newJobForm>) {
@@ -119,7 +113,7 @@ export function Api2Component() {
                     </div>
                 </div>
                 <div className="flex justify-center">
-                    <Button type="submit">Submit</Button>
+                    <Button type="submit">Create</Button>
                 </div>
             </form>
         </Form>

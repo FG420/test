@@ -20,8 +20,8 @@ import { useRouter } from "next/navigation";
 import { tJobs } from "@/models/jobs";
 import { Textarea } from "./ui/textarea";
 
-const newJobForm = z.object({
-    jobId: z.string(),
+const modifyJobForm = z.object({
+    jobId: z.string({ message: "Please select a Job to modify." }),
     title: z.string().optional(),
     description: z.string().optional(),
     salary: z.coerce.number().optional(),
@@ -37,33 +37,40 @@ export function Api3Component() {
             const res = await axios.get('api/jobs');
             setJobs(res.data.jobs);
         } catch (error: any) {
-            console.log(error);
+            console.error('Error fetching jobs:', error);
         }
     };
 
-    const form = useForm<z.infer<typeof newJobForm>>({
-        resolver: zodResolver(newJobForm),
+    const form = useForm<z.infer<typeof modifyJobForm>>({
+        resolver: zodResolver(modifyJobForm),
     });
 
-    async function onSubmit(values: z.infer<typeof newJobForm>) {
-        console.log(values);
+    useEffect(() => {
+        getAllJobs();
+    }, []);
+
+    async function onSubmit(values: z.infer<typeof modifyJobForm>) {
         try {
-            const updateData = {
-                title: values.title,
-                description: values.description,
-                salaryPreTax: values.salary,
-                date: values.date,
+
+            if (!values.title && !values.description && !values.salary && !values.date) {
+                alert("Fill at least one field for update");
+            } else {
+
+                const updateData = {
+                    title: values.title,
+                    description: values.description,
+                    salaryPreTax: values.salary,
+                    date: values.date,
+                };
+
+                await axios.post(`api/jobs/modify?id=${values.jobId}`, updateData);
+                router.push('/');
             }
-            await axios.post(`api/jobs/modify?id=${values.jobId}`, updateData);
-            router.push('/')
+
         } catch (error: any) {
-            console.log(error);
+            console.error('Error modifying job:', error);
         }
     }
-
-    useEffect(() => {
-        getAllJobs()
-    }, [])
 
     return (
         <Form {...form}>
@@ -76,7 +83,12 @@ export function Api3Component() {
                             <FormItem>
                                 <FormLabel>Select Job to Modify</FormLabel>
                                 <FormControl>
-                                    <Select onValueChange={field.onChange} value={field.value}>
+                                    <Select
+                                        onValueChange={(value) => {
+                                            field.onChange(value);
+                                        }}
+                                        value={field.value}
+                                    >
                                         <SelectTrigger className="">
                                             <SelectValue placeholder="Select Job" />
                                         </SelectTrigger>
@@ -89,75 +101,83 @@ export function Api3Component() {
                                         </SelectContent>
                                     </Select>
                                 </FormControl>
-                                <FormMessage />
+                                <FormMessage>{form.formState.errors.jobId?.message}</FormMessage>
                             </FormItem>
                         )}
                     />
                 </div>
 
-                <FormField
-                    control={form.control}
-                    name="title"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Modify Title</FormLabel>
-                            <FormControl>
-                                <Input placeholder="Insert Title" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="description"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Modify Job Description</FormLabel>
-                            <FormControl>
-                                <Textarea placeholder="Insert Job Description... (max 400 chars)" {...field} maxLength={400} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <div className="flex justify-around">
-                    <div className="p-2">
-
+                {form.watch('jobId') && (
+                    <>
                         <FormField
                             control={form.control}
-                            name="salary"
+                            name="title"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Modify Salary</FormLabel>
+                                    <FormLabel>Modify Title</FormLabel>
                                     <FormControl>
-                                        <Input type="number" {...field} step={.01} />
+                                        <Input placeholder="Insert Title" {...field} />
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage>{form.formState.errors.title?.message}</FormMessage>
                                 </FormItem>
                             )}
                         />
-                    </div>
-                    <div className="p-2">
                         <FormField
                             control={form.control}
-                            name="date"
+                            name="description"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Modify Date</FormLabel>
+                                    <FormLabel>Modify Job Description</FormLabel>
                                     <FormControl>
-                                        <Input
-                                            type="date"
+                                        <Textarea
+                                            placeholder="Insert Job Description... (max 400 chars)"
                                             {...field}
-                                            value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
+                                            maxLength={400}
                                         />
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage>{form.formState.errors.description?.message}</FormMessage>
                                 </FormItem>
                             )}
                         />
-                    </div>
-                </div>
+                        <div className="flex justify-around">
+                            <div className="p-2">
+                                <FormField
+                                    control={form.control}
+                                    name="salary"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Modify Salary</FormLabel>
+                                            <FormControl>
+                                                <Input type="number" {...field} step={0.01} />
+                                            </FormControl>
+                                            <FormMessage>{form.formState.errors.salary?.message}</FormMessage>
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+                            <div className="p-2">
+                                <FormField
+                                    control={form.control}
+                                    name="date"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Modify Date</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type="date"
+                                                    {...field}
+                                                    value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
+                                                />
+                                            </FormControl>
+                                            <FormMessage>{form.formState.errors.date?.message}</FormMessage>
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+                        </div>
+                    </>
+                )}
+
                 <div className="flex justify-center">
                     <Button type="submit">Modify</Button>
                 </div>
