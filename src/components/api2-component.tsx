@@ -1,103 +1,127 @@
-'use client';
+"use client";
 
-import { tLeasing } from "@/models/leasing";
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
 import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
-import { Input } from "./ui/input";
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "./ui/textarea";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
-export default function Api2Component() {
-    const [leasings, setLeasings] = useState<tLeasing[]>([]);
-    const [surname, setSurname] = useState<string | undefined>(undefined);
-    const [name, setName] = useState<string | undefined>(undefined);
+const newJobForm = z.object({
+    title: z.string(),
+    description: z.string(),
+    salary: z.coerce.number(),
+    date: z.string(),
+});
 
-    const getLeasings = async () => {
+export function Api2Component() {
+    const router = useRouter();
+
+    const form = useForm<z.infer<typeof newJobForm>>({
+        resolver: zodResolver(newJobForm),
+        defaultValues: {
+            title: '',
+            description: '',
+            salary: 0,
+            date: '',
+        },
+    });
+
+    async function onSubmit(values: z.infer<typeof newJobForm>) {
+        console.log(values);
         try {
-            let url = '/api/leasings';
-            const params = {};
-
-            if (surname) {
-                url += `/getBy?surname=${surname}`;
-            } else if (name) {
-                url += `/getBy?name=${name}`;
-            }
-
-            const res = await axios.get(url);
-            setLeasings(res.data.leasings);
-        } catch (error) {
-            console.error('Error fetching leasings:', error);
+            await axios.post('api/jobs', values);
+            router.push('/');
+        } catch (error: any) {
+            console.log(error);
         }
-    };
-
-    useEffect(() => {
-        getLeasings();
-    }, [surname, name]);
-
-    const formatDateString = (date: Date | string) => {
-        if (typeof date === 'string') {
-            date = new Date(date);
-        }
-        return date.toLocaleDateString();
-    };
-
-    const handleSurnameFilter = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSurname(event.target.value);
-    };
-
-    const handleNameFilter = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setName(event.target.value);
-    };
+    }
 
     return (
-        <>
-            <div className="flex justify-between">
-                <div className="p-4">
-                    <Input
-                        type="text"
-                        placeholder="Filter Surname"
-                        value={surname || ''}
-                        onChange={handleSurnameFilter}
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                <div className="">
+                    <FormField
+                        control={form.control}
+                        name="title"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Title Job</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="Insert Title Job" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
                     />
                 </div>
-                <div className="p-4">
-                    <Input
-                        type="text"
-                        placeholder="Filter Name"
-                        value={name || ''}
-                        onChange={handleNameFilter}
+
+                <div className="">
+                    <FormField
+                        control={form.control}
+                        name="description"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Job Description</FormLabel>
+                                <FormControl>
+                                    <Textarea placeholder="Insert Job Description... (max 400 chars)" {...field} maxLength={400} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
                     />
                 </div>
-            </div>
-            <div>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead className="">Leasing Owner</TableHead>
-                            <TableHead>Date</TableHead>
-                            <TableHead>Rate %</TableHead>
-                            <TableHead className="text-right">Amount</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {leasings.map((leasing) => (
-                            <TableRow key={leasing._id}>
-                                <TableCell className="font-medium">{leasing.owner.surname} {leasing.owner.name}</TableCell>
-                                <TableCell>{formatDateString(leasing.date)}</TableCell>
-                                <TableCell>{leasing.rate}</TableCell>
-                                <TableCell className="text-right">€ {leasing.amount}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </div>
-        </>
+                <div className="flex justify-around">
+                    <div className="p-2">
+                        <FormField
+                            control={form.control}
+                            name="salary"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Salary</FormLabel>
+                                    <FormControl>
+                                        <Input type="number" {...field} step={.01} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+                    <div className="p-2">
+                        <FormField
+                            control={form.control}
+                            name="date"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Date</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            type="date"
+                                            {...field}
+                                            value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+                </div>
+                <div className="flex justify-center">
+                    <Button type="submit">Submit</Button>
+                </div>
+            </form>
+        </Form>
     );
 }

@@ -7,7 +7,7 @@ export function NavBarComponent() {
 
 
     return (
-        <div className="flex justify-center">
+        <div className="flex justify-center border border-b-2 border-b-slate-200 rounded-3xl">
             <ul className="flex justify-center">
                 <div className="p-4">
                     <Link href={'/'}>Api 1 - Home</Link>
@@ -23,15 +23,6 @@ export function NavBarComponent() {
                 </div>
                 <div className="p-4">
                     <Link href={'/page5'}>Api 5</Link>
-                </div>
-                <div className="p-4">
-                    <Link href={'/page6'}>Api 6</Link>
-                </div>
-                <div className="p-4">
-                    <Link href={'/page7'}>Api 7</Link>
-                </div>
-                <div className="p-4">
-                    <Link href={'/page8'}>Api 8</Link>
                 </div>
             </ul>
         </div>

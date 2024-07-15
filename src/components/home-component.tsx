@@ -1,6 +1,6 @@
 'use client'
 
-import { tLeasing } from "@/models/leasing"
+import { tJobs } from "@/models/jobs"
 import axios from "axios"
 import { useEffect, useState } from "react"
 import {
@@ -13,26 +13,27 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { Input } from "./ui/input"
+import { Label } from "./ui/label"
 
 export default function HomeComponent() {
-    const [leasings, setLeasings] = useState<tLeasing[]>([]);
+    const [jobs, setJobs] = useState<tJobs[]>([]);
     const [viewLimit, setViewLimit] = useState<number | undefined>(undefined);
 
-    const getLeasings = async () => {
+    const getJobs = async () => {
         try {
-            let url = '/api/leasings'
+            let url = '/api/jobs'
             if (viewLimit) {
                 url += `?limit=${viewLimit}`;
             }
             const res = await axios.get(url);
-            setLeasings(res.data.leasings);
+            setJobs(res.data.jobs);
         } catch (error) {
-            console.error('Error fetching leasings:', error);
+            console.error('Error fetching Jobs:', error);
         }
     };
 
     useEffect(() => {
-        getLeasings();
+        getJobs();
     }, [viewLimit]);
 
     const formatDateString = (date: Date | string) => {
@@ -50,6 +51,7 @@ export default function HomeComponent() {
         <>
             <div className="flex justify-between p-8">
                 <div className="">
+                    <Label className="p-2">Limit: </Label>
                     <Input
                         type="number"
                         placeholder="View Limit"
@@ -64,21 +66,21 @@ export default function HomeComponent() {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="">Owner ID</TableHead>
-                            <TableHead className="">Leasing Owner</TableHead>
+                            <TableHead className="text-left">Job ID</TableHead>
+                            <TableHead className="">Title</TableHead>
+                            <TableHead className="">Description</TableHead>
                             <TableHead>Date</TableHead>
-                            <TableHead>Rate %</TableHead>
-                            <TableHead className="text-right">Amount</TableHead>
+                            <TableHead className="text-right font-medium">Salary Pre Taxes</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {leasings.map((leasing) => (
-                            <TableRow key={leasing._id}>
-                                <TableCell className="font-medium">{leasing._id}</TableCell>
-                                <TableCell className="font-medium">{leasing.owner.surname} {leasing.owner.name}</TableCell>
-                                <TableCell>{formatDateString(leasing.date)}</TableCell>
-                                <TableCell>{leasing.rate}</TableCell>
-                                <TableCell className="text-right">€ {leasing.amount}</TableCell>
+                        {jobs.map((jobs) => (
+                            <TableRow key={jobs._id}>
+                                <TableCell className="font-medium">{jobs._id}</TableCell>
+                                <TableCell>{jobs.title} </TableCell>
+                                <TableCell>{jobs.description} </TableCell>
+                                <TableCell>{formatDateString(jobs.date)}</TableCell>
+                                <TableCell className="font-medium text-right">{jobs.salaryPreTax.toFixed(2)} €</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

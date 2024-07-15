@@ -1,9 +1,11 @@
-"use client";
+'use client'
+
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
+
 import {
     Form,
     FormControl,
@@ -12,161 +14,124 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
+
+import {
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table"
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { tLeasing } from "@/models/leasing";
+import { tJobs } from "@/models/jobs";
+import { Label } from "./ui/label";
 
-const newLesingForm = z.object({
-    ownerId: z.string(),
-    name: z.string().optional(),
-    surname: z.string().optional(),
-    amount: z.coerce.number().optional(),
-    rate: z.coerce.number().optional(),
+
+const deleteForm = z.object({
+    jobId: z.string(),
 });
 
 export function Api4Component() {
     const router = useRouter()
-    const [leasings, setLeasings] = useState<tLeasing[]>([]);
 
-    const getAllLeasings = async () => {
+    const [jobs, setJobs] = useState<tJobs[]>([])
+
+    const getAllJobs = async () => {
         try {
-            const res = await axios.get('api/leasings');
-            setLeasings(res.data.leasings);
-        } catch (error: any) {
-            console.log(error);
-        }
-    };
+            const res = await axios.get('api/jobs')
 
-    const form = useForm<z.infer<typeof newLesingForm>>({
-        resolver: zodResolver(newLesingForm),
+            setJobs(res.data.jobs)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const form = useForm<z.infer<typeof deleteForm>>({
+        resolver: zodResolver(deleteForm),
     });
 
-    async function onSubmit(values: z.infer<typeof newLesingForm>) {
-        console.log(values);
+    async function onSubmit(values: z.infer<typeof deleteForm>) {
         try {
-            const updateData = {
-                name: values.name,
-                surname: values.surname,
-                amount: values.amount,
-                rate: values.rate,
-            }
-            await axios.post(`api/leasings/modify?id=${values.ownerId}`, updateData);
+            await axios.delete(`api/jobs?id=${values.jobId}`);
             router.push('/')
         } catch (error: any) {
             console.log(error);
         }
     }
 
+
     useEffect(() => {
-        getAllLeasings()
+        getAllJobs()
     }, [])
 
-    return (
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                <div className="flex justify-center">
-                    <FormField
-                        control={form.control}
-                        name="ownerId"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Owner to Modify</FormLabel>
-                                <FormControl>
-                                    <Select onValueChange={field.onChange} value={field.value}>
-                                        <SelectTrigger className="w-56">
-                                            <SelectValue placeholder="Select Owner" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {leasings.map((leasing) => (
-                                                <SelectItem key={leasing._id} value={String(leasing._id)}>
-                                                    {leasing.owner.surname} {leasing.owner.name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </div>
-                <div className="flex justify-around">
+    const formatDateString = (date: Date | string) => {
+        if (typeof date === 'string') {
+            date = new Date(date);
+        }
+        return date.toLocaleDateString();
+    };
 
-                    <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Owner Name</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="Insert Owner Name" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="surname"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Owner Surname</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="Insert Owner Surname" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </div>
-                <div className="flex justify-around">
-                    <FormField
-                        control={form.control}
-                        name="amount"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Amount</FormLabel>
-                                <FormControl>
-                                    <Input type="number" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="rate"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Rate</FormLabel>
-                                <FormControl>
-                                    <Select onValueChange={(value) => field.onChange(Number(value))}
-                                        value={String(field.value)}>
-                                        <SelectTrigger className="w-56">
-                                            <SelectValue placeholder="Select Rate" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="6">6</SelectItem>
-                                            <SelectItem value="12">12</SelectItem>
-                                            <SelectItem value="18">18</SelectItem>
-                                            <SelectItem value="24">24</SelectItem>
-                                            <SelectItem value="48">48</SelectItem>
-                                            <SelectItem value="60">60</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </div>
-                <div className="flex justify-center">
-                    <Button type="submit">Submit</Button>
-                </div>
-            </form>
-        </Form>
+    return (
+        <>
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2 p-6">
+                    <Label className="px-4">Job ID</Label>
+                    <div className="flex justify-around items-center">
+
+                        <div className="p-2">
+
+                            <FormField
+                                control={form.control}
+                                name="jobId"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormControl>
+                                            <Input type="text" placeholder="Insert Job ID" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
+                        <div className="p-2">
+                            <Button type="submit">Delete Job</Button>
+                        </div>
+                    </div>
+                </form>
+            </Form>
+
+
+            <div>
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead className="text-left">Job ID</TableHead>
+                            <TableHead className="">Title</TableHead>
+                            <TableHead className="">Description</TableHead>
+                            <TableHead>Date</TableHead>
+                            <TableHead className="text-right font-medium">Salary Pre Taxes</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {jobs.map((jobs) => (
+                            <TableRow key={jobs._id}>
+                                <TableCell className="font-medium">{jobs._id}</TableCell>
+                                <TableCell>{jobs.title} </TableCell>
+                                <TableCell>{jobs.description} </TableCell>
+                                <TableCell>{formatDateString(jobs.date)}</TableCell>
+                                <TableCell className="font-medium text-right">{jobs.salaryPreTax.toFixed(2)} €</TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </div>
+        </>
     );
 }
