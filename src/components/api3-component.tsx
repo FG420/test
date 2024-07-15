@@ -68,7 +68,7 @@ export function Api3Component() {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <div className="flex justify-center">
+                <div className="">
                     <FormField
                         control={form.control}
                         name="jobId"
@@ -77,7 +77,7 @@ export function Api3Component() {
                                 <FormLabel>Select Job to Modify</FormLabel>
                                 <FormControl>
                                     <Select onValueChange={field.onChange} value={field.value}>
-                                        <SelectTrigger className="w-56">
+                                        <SelectTrigger className="">
                                             <SelectValue placeholder="Select Job" />
                                         </SelectTrigger>
                                         <SelectContent>
